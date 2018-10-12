@@ -84,12 +84,26 @@ def check_sentence_end_punctuation(sentence):
     punctuation = True
     if sentence[len(sentence)-1] not in string.punctuation:
         punctuation = False
-    #return punctuation
     if punctuation == True:
         print ("Sentence ended with a punctuation.")
     else:
         print ("WARNING: Sentence need to be ended with a punctuation.")
 
+
+### ----- Checking if word is in our word list (word_unigram_prob) ----- #
+def look_for_word_in_list(word):
+    if word in word_unigram_prob:
+        return True 
+    else:
+        return False
+
+def look_for_word_in_list_massage(word):
+    if word in word_unigram_prob:
+        print (word + ": was found in dictionary so it spelled correctly")
+        look_for_word_in_list(True)
+    else:
+        print (word + ": was not found in dictionary so it spelled incorrectly ***")
+        look_for_word_in_list(False) 
 
 
 if __name__ == '__main__':

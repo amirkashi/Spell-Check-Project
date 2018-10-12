@@ -26,7 +26,6 @@ def make_sentences(word_list):
     sentences = word_list
     sentences[0:0] = [('<s>')]
     tags[0:0] = [('<s>')]
-
     for items in range(0, len(sentences)):
         if tags[items] == '.':
             sentences[items+1:items+1] = [('</s>')]
@@ -36,9 +35,30 @@ def make_sentences(word_list):
             sentences.append(('</s>'))
     return sentences
 
+def calculate_bigram_probability(sentences):
+    bigrams = defaultdict(int)
+    for words in range(0, len(sentences)-1):
+        bigrams[(sentences[words], sentences[words+1])] +=1
+
+    bigram_probs = {}
+    for items in bigrams:
+        bigram_probs[items] = bigrams[items] / float(len(sentences))
+    
+    return bigram_probs
+
+def find_trigrams(sentences):
+    trigram = defaultdict(int)
+    for words in range(0, len(sentences)-2):
+        trigram[(sentences[words], sentences[words+1], sentences[words+2])] += 1
+    return trigram
+
+
 
 if __name__ == '__main__':
     word_list, tags = read_file('wsj00-18_ss.tag')
     word_unigram_prob = calculate_unigram_probability(word_list)
     sentences = make_sentences(word_list)
-    print (sentences)
+    bigram_probs =  calculate_bigram_probability(sentences)
+    trigram = find_trigrams(sentences)
+    
+    

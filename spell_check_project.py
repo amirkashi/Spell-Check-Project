@@ -52,6 +52,44 @@ def find_trigrams(sentences):
         trigram[(sentences[words], sentences[words+1], sentences[words+2])] += 1
     return trigram
 
+def minimum_edit_distance(given_word, dictionary_word):
+	med_matrix = numpy.zeros((len(given_word)+1 , len(dictionary_word)+1 ))
+
+	for i in range(0, len(given_word)+1):
+		med_matrix[i][0]=i
+	for j in range(0, len(dictionary_word)+1):
+		med_matrix[0][j]=j
+
+	for i in range (1, len(given_word)+1):
+		for j in range(1, len(dictionary_word)+1):
+			if given_word[i-1]==dictionary_word[j-1]:
+				med_matrix[i][j] = med_matrix[i-1][j-1] 
+			else:
+				med_matrix[i][j]= min(med_matrix[i][j-1], med_matrix[i-1][j], med_matrix[i-1][j-1])+1
+	return med_matrix[i][j]
+
+### --- working on given sentence --- ###
+def check_fist_word_capital(sentence):
+    first_word_cap = True
+    if sentence[0].islower():
+        first_word_cap = False
+    #return first_word_cap
+    if first_word_cap == True:
+        print ("First letter of the first word of the given sentence is capital.")
+    else:
+        print ("WARNING: First letter of the first word of the given sentence need to be capitalized.")
+
+
+def check_sentence_end_punctuation(sentence):
+    punctuation = True
+    if sentence[len(sentence)-1] not in string.punctuation:
+        punctuation = False
+    #return punctuation
+    if punctuation == True:
+        print ("Sentence ended with a punctuation.")
+    else:
+        print ("WARNING: Sentence need to be ended with a punctuation.")
+
 
 
 if __name__ == '__main__':

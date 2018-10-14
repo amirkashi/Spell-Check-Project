@@ -67,11 +67,11 @@ def look_for_word_in_list_massage(word):
 
 
 
-def find_trigrams(sentences):
-    trigram = defaultdict(int)
-    for words in range(0, len(sentences)-2):
-        trigram[(sentences[words], sentences[words+1], sentences[words+2])] += 1
-    return trigram
+#def find_trigrams(sentences):
+    #trigram = defaultdict(int)
+    #for words in range(0, len(sentences)-2):
+        #trigram[(sentences[words], sentences[words+1], sentences[words+2])] += 1
+    #return trigram
 
 ### ----- finding suggested words using a simple bigram method ----- ###
 def find_simple_bigram(word, def_med):
@@ -223,8 +223,8 @@ def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob
 
         for word in wrong_words:
             find_unigrams = find_unigram.Find_Unigram()
-            find_unigrams.find_unigram(word, default_med, word_unigram_prob, )
-            #find_unigram(word, default_med)
+            find_unigrams.find_unigram(word, default_med, word_unigram_prob, row_number_print)
+            
             #find_simple_bigram(word, default_med)
             #find_unigram(word, default_med)
 
@@ -247,7 +247,7 @@ if __name__ == '__main__':
     
     
     
-    trigram = find_trigrams(sentences)
+    #trigram = find_trigrams(sentences)
     row_number_print = 10 # number of corect word code suggest to user
     default_med = 2
     #input_sentence = raw_input("Please Enter a Aentece: ")

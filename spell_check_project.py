@@ -4,42 +4,9 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 import string
 from prettytable import PrettyTable
 import read_file
-import calculate_probabilities
+from calculate_probabilities import *
+import make_sentence
 
-#def calculate_unigram_probability(word_list):
-    #word_count = defaultdict(int)
-    #for words in word_list:
-        #word_count[words] +=1
-    
-    #word_unigram_prob = {}
-    #for word in word_count:
-        #word_unigram_prob[word] = word_count[word]/ float(len(word_count))
-    
-    #return word_unigram_prob
-
-def make_sentences(word_list):
-    sentences = word_list
-    sentences[0:0] = [('<s>')]
-    tags[0:0] = [('<s>')]
-    for items in range(0, len(sentences)):
-        if tags[items] == '.':
-            sentences[items+1:items+1] = [('</s>')]
-            tags[items+1:items+1] = [('</s>')]
-            sentences[items+2:items+2] = [('<s>')]
-            tags[items+2:items+2] = [('<s>')]
-            sentences.append(('</s>'))
-    return sentences
-
-def calculate_bigram_probability(sentences):
-    bigrams = defaultdict(int)
-    for words in range(0, len(sentences)-1):
-        bigrams[(sentences[words], sentences[words+1])] +=1
-
-    bigram_probs = {}
-    for items in bigrams:
-        bigram_probs[items] = bigrams[items] / float(len(sentences))
-    
-    return bigram_probs
 
 def find_trigrams(sentences):
     trigram = defaultdict(int)
@@ -153,7 +120,129 @@ def find_unigram(word, def_med):
         print ("Sugested words for " + word + " using unigram model are:")
         print (table)
 
+### ----- finding suggested words using a simple bigram method ----- ###
+def find_simple_bigram(word, def_med):
+	
+	table = PrettyTable(['Suggested Word', 'Minimum Edit distance', "Probability"])
+	
+	corrct_word_med_1 = []
+	corrct_word_med_2 = []
+	corrct_word_med_3 = []
+	for correct_words in word_unigram_prob:
+		temp = []
+		score = 0.0
+		med = minimum_edit_distance(correct_words, word)
+		if 0< med <= def_med:
+			for wrd in trigram:
+				if wrd[1] == correct_words:
+					p1 = word_unigram_prob[wrd[1]] * bigram_probs[(wrd[0], wrd[1])]
+					p2 = word_unigram_prob[wrd[1]] * bigram_probs[(wrd[1], wrd[2])]
+					prob = p1 * p2
+					score += prob
+			temp.append(correct_words)
+			temp.append(int(med))
+			temp.append(score)
+			#corrct_word_table.append(temp)
+			if med == 1:
+				corrct_word_med_1.append(temp)
+			elif med == 2:
+				corrct_word_med_2.append(temp)
+			else:
+				corrct_word_med_3.append(temp)
+	
+	
+	corrct_word_table_sorted = sorted(corrct_word_med_1,key=lambda l:l[2], reverse=True)
+	corrct_word_med_2_sorted = sorted(corrct_word_med_2,key=lambda l:l[2], reverse=True)
+	for lst in corrct_word_med_2_sorted:
+		corrct_word_table_sorted.append(lst)
+		
+	corrct_word_med_3_sorted = sorted(corrct_word_med_3,key=lambda l:l[2], reverse=True)
+	for lst in corrct_word_med_3_sorted:
+		corrct_word_table_sorted.append(lst)
+	
+	row = 0
+	for items in corrct_word_table_sorted:
+		if row < row_number_print:
+			table.add_row(items)
+		row+=1
+			
+	table.align['Suggested Word'] = "l"
+	table.align['Probability'] = "l"
+	
+	if len(corrct_word_table_sorted) == 0:
+		def_med +=1
+		find_simple_bigram(word, def_med)
+	elif 6 <= def_med:
+		print " "
+		print "There is not a suggested word for" + word + "in a  reasonable edit distance."
+		print "Code does not look for words with 6 or more edit distance" 
+	else:
+		print " "
+		print "Sugested words for " + word + " using simple bigram model are:"
+		print table 
 
+### --- this function find suggested words regarding to the previous and next words of the wrong word of the given sentence ----- ###
+def find_bigram(sen_list, word, def_med):
+	
+	table = PrettyTable(['Suggested Word', 'Minimum Edit distance', "Probability"])
+	
+	corrct_word_med_1 = []
+	corrct_word_med_2 = []
+	corrct_word_med_3 = []
+	for correct_words in word_unigram_prob:
+		temp = []
+		score = 0.0
+		med = minimum_edit_distance(correct_words, word)
+		if  0< med <= def_med:
+			wrong_wrod_index_in_sentence = sen_list.index(word)
+			previous_word = sen_list[wrong_wrod_index_in_sentence - 1]
+			next_word = sen_list[wrong_wrod_index_in_sentence + 1]
+			prv_score = bigram_probs.get((previous_word, correct_words), 0) * word_unigram_prob[correct_words]
+			next_score = bigram_probs.get((correct_words, next_word), 0) * word_unigram_prob[correct_words]
+			score = prv_score * next_score
+			temp.append(correct_words)
+			temp.append(int(med))
+			temp.append(score)
+			#corrct_word_table.append(temp)
+			if med == 1:
+				corrct_word_med_1.append(temp)
+			elif med == 2:
+				corrct_word_med_2.append(temp)
+			else:
+				corrct_word_med_3.append(temp)
+	
+	corrct_word_table_sorted = sorted(corrct_word_med_1,key=lambda l:l[2], reverse=True)
+	corrct_word_med_2_sorted = sorted(corrct_word_med_2,key=lambda l:l[2], reverse=True)
+	for lst in corrct_word_med_2_sorted:
+		corrct_word_table_sorted.append(lst)
+		
+	corrct_word_med_3_sorted = sorted(corrct_word_med_3,key=lambda l:l[2], reverse=True)
+	for lst in corrct_word_med_3_sorted:
+		corrct_word_table_sorted.append(lst)
+	
+	row = 0
+	for items in corrct_word_table_sorted:
+		if row < row_number_print:
+			table.add_row(items)
+		row+=1
+		
+	table.align['Suggested Word'] = "l"
+	table.align['Probability'] = "l"
+	
+	if len(corrct_word_table_sorted) == 0:
+		def_med +=1
+		find_bigram(sen_list, word, def_med)
+	elif 6 <= def_med:
+		print " "
+		print "There is not a suggested word for" + word + "in a  reasonable edit distance."
+		print "Code does not look for words with 6 or more edit distance" 
+	else:
+		print " "
+		print "Sugested words for " + word + " using bigram model are:"
+		print table 
+
+
+# ---
 def find_wrong_words(given_words):
     wrong_words = []
     for wrd in given_words:
@@ -181,20 +270,28 @@ def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob
 
         for word in wrong_words:
             find_unigram(word, default_med)
-            
+            #find_simple_bigram(word, default_med)
+            #find_unigram(word, default_med)
 
     
 
 
 if __name__ == '__main__':
     print ("Please wait ")
-    read_file = read_file.read_file('wsj00-18_ss.tag')
+    read_file = read_file.read_file('wsj00-18.tag')
     word_list, tags = read_file.make_wort_and_tag_lists()
     
-    calculate_probabilities = calculate_probabilities.Calculate_Unigram_Probability()
-    word_unigram_prob = calculate_probabilities.calculate_unigram_probability(word_list)
-    sentences = make_sentences(word_list)
-    bigram_probs =  calculate_bigram_probability(sentences)
+    calculate_unigram_probabilities = Calculate_Unigram_Probability()
+    word_unigram_prob = calculate_unigram_probabilities.calculate_unigram_probability(word_list)
+    
+    make_sentence = make_sentence.Make_Sentence()
+    sentences = make_sentence.make_sentence(word_list, tags)
+    
+    calculate_unigram_probabilities = Calculate_Bigram_Probability()
+    bigram_probs =  calculate_unigram_probabilities.calculate_bigram_probability(sentences)
+    
+    
+    
     trigram = find_trigrams(sentences)
     row_number_print = 10 # number of corect word code suggest to user
     default_med = 2
@@ -202,8 +299,6 @@ if __name__ == '__main__':
     input_sentence = "this is a bok"
     
     spell_check(input_sentence, row_number_print, default_med, word_unigram_prob)
-    
-    
     
     
     

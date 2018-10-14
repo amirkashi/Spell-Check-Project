@@ -1,6 +1,7 @@
+import numpy 
 
 class Minimum_Edit_Distance:
-    def minimum_edit_distance(given_word, dictionary_word):
+    def minimum_edit_distance(self, given_word, dictionary_word):
         med_matrix = numpy.zeros((len(given_word)+1 , len(dictionary_word)+1 ))
 
         for i in range(0, len(given_word)+1):

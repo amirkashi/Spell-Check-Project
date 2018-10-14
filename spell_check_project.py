@@ -6,13 +6,9 @@ from prettytable import PrettyTable
 import read_file
 from calculate_probabilities import *
 import make_sentence
+import find_unigram
 
 
-def find_trigrams(sentences):
-    trigram = defaultdict(int)
-    for words in range(0, len(sentences)-2):
-        trigram[(sentences[words], sentences[words+1], sentences[words+2])] += 1
-    return trigram
 
 def minimum_edit_distance(given_word, dictionary_word):
 	med_matrix = numpy.zeros((len(given_word)+1 , len(dictionary_word)+1 ))
@@ -29,6 +25,7 @@ def minimum_edit_distance(given_word, dictionary_word):
 			else:
 				med_matrix[i][j]= min(med_matrix[i][j-1], med_matrix[i-1][j], med_matrix[i-1][j-1])+1
 	return med_matrix[i][j]
+
 
 ### --- working on given sentence --- ###
 def check_fist_word_capital(sentence):
@@ -67,58 +64,14 @@ def look_for_word_in_list_massage(word):
         print (word + ": was not found in dictionary so it spelled incorrectly ***")
         look_for_word_in_list(False) 
 
-### -- unigram 
-def find_unigram(word, def_med):
-
-    table = PrettyTable(['Suggested Word', 'Minimum Edit distance', "Probability"])
-
-    corrct_word_med_1 = []
-    corrct_word_med_2 = []
-    corrct_word_med_3 = []
-    for correct_words in word_unigram_prob:
-        temp = []
-        med = minimum_edit_distance(correct_words, word)
-        if 0< med <= def_med:
-            temp.append(correct_words)
-            temp.append(int(med))
-            temp.append(word_unigram_prob[correct_words])
-            if med == 1:
-                corrct_word_med_1.append(temp)
-            elif med == 2:
-                corrct_word_med_2.append(temp)
-            else:
-                corrct_word_med_3.append(temp)
-
-    corrct_word_table_sorted = sorted(corrct_word_med_1,key=lambda l:l[2], reverse=True)
-    corrct_word_med_2_sorted = sorted(corrct_word_med_2,key=lambda l:l[2], reverse=True)
-    for lst in corrct_word_med_2_sorted:
-        corrct_word_table_sorted.append(lst)
-
-    corrct_word_med_3_sorted = sorted(corrct_word_med_3,key=lambda l:l[2], reverse=True)
-    for lst in corrct_word_med_3_sorted:
-        corrct_word_table_sorted.append(lst)
-
-    row = 0
-    for items in corrct_word_table_sorted:
-        if row < row_number_print:
-            table.add_row(items)
-            row+=1
-
-    table.align['Suggested Word'] = "l"
-    table.align['Probability'] = "l"
 
 
-    if len(corrct_word_table_sorted) == 0:
-        def_med +=1
-        find_unigram(word, def_med)
-    elif  6 <= def_med:
-        print (" ")
-        print ("There is not a suggested word for" + word + "in a  reasonable edit distance.")
-        print ("Code does not look for words with 6 or more edit distance")
-    else:
-        print (" ")
-        print ("Sugested words for " + word + " using unigram model are:")
-        print (table)
+
+def find_trigrams(sentences):
+    trigram = defaultdict(int)
+    for words in range(0, len(sentences)-2):
+        trigram[(sentences[words], sentences[words+1], sentences[words+2])] += 1
+    return trigram
 
 ### ----- finding suggested words using a simple bigram method ----- ###
 def find_simple_bigram(word, def_med):
@@ -269,7 +222,9 @@ def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob
             print (word)
 
         for word in wrong_words:
-            find_unigram(word, default_med)
+            find_unigrams = find_unigram.Find_Unigram()
+            find_unigrams.find_unigram(word, default_med, word_unigram_prob, )
+            #find_unigram(word, default_med)
             #find_simple_bigram(word, default_med)
             #find_unigram(word, default_med)
 
@@ -278,7 +233,7 @@ def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob
 
 if __name__ == '__main__':
     print ("Please wait ")
-    read_file = read_file.read_file('wsj00-18.tag')
+    read_file = read_file.read_file('wsj00-18_ss.tag')
     word_list, tags = read_file.make_wort_and_tag_lists()
     
     calculate_unigram_probabilities = Calculate_Unigram_Probability()

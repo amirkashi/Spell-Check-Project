@@ -3,24 +3,19 @@ import numpy
 from nltk.tokenize import sent_tokenize, word_tokenize
 import string
 from prettytable import PrettyTable
+import read_file
+import calculate_probabilities
 
-
-def read_file(input_file):
-    read_Lines = [read_Lines.strip() for read_Lines in open(input_file) if "\t" in read_Lines]
-    word_List = [word.split("\t")[0] for word in read_Lines if "\t" in word ]
-    tags = [word.split("\t")[1] for word in read_Lines if "\t" in word ]
-    return word_List, tags
-
-def calculate_unigram_probability(word_list):
-    word_count = defaultdict(int)
-    for words in word_list:
-        word_count[words] +=1
+#def calculate_unigram_probability(word_list):
+    #word_count = defaultdict(int)
+    #for words in word_list:
+        #word_count[words] +=1
     
-    word_unigram_prob = {}
-    for word in word_count:
-        word_unigram_prob[word] = word_count[word]/ float(len(word_count))
+    #word_unigram_prob = {}
+    #for word in word_count:
+        #word_unigram_prob[word] = word_count[word]/ float(len(word_count))
     
-    return word_unigram_prob
+    #return word_unigram_prob
 
 def make_sentences(word_list):
     sentences = word_list
@@ -193,8 +188,11 @@ def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob
 
 if __name__ == '__main__':
     print ("Please wait ")
-    word_list, tags = read_file('wsj00-18_ss.tag')
-    word_unigram_prob = calculate_unigram_probability(word_list)
+    read_file = read_file.read_file('wsj00-18_ss.tag')
+    word_list, tags = read_file.make_wort_and_tag_lists()
+    
+    calculate_probabilities = calculate_probabilities.Calculate_Unigram_Probability()
+    word_unigram_prob = calculate_probabilities.calculate_unigram_probability(word_list)
     sentences = make_sentences(word_list)
     bigram_probs =  calculate_bigram_probability(sentences)
     trigram = find_trigrams(sentences)

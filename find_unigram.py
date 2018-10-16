@@ -2,7 +2,7 @@ import minimum_edit_distance
 from prettytable import PrettyTable
 
 class Find_Unigram(minimum_edit_distance.Minimum_Edit_Distance):
-#class Find_Unigram():
+    
     def find_unigram(self, word, def_med, word_unigram_prob, row_number_print):
 
         table = PrettyTable(['Suggested Word', 'Minimum Edit distance', "Probability"])

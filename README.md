@@ -12,7 +12,7 @@ In order to recommend the closed word to the user program will perform the follo
 
 1- Check the word is in word list. If word is in the word list program will tell user that the entered word is correct.
 
-2- If program find that the given word is not in the word list. It calculate MED and save words with 1 and 2 MED in a list. This is because 80% of errors are within 1 MED and almost all other errors are within 2 MED [1].
+2- If program find that the given word is not in the word list. It calculate MED and save words with 1 and 2 MED in a list. This is because 80% of errors are within 1 MED and almost all other errors are within 2 MED.
 
 3- If program cannot find correct word with 1 or 2 MED it notifies the user and tell in what MED the correct word is found. Program will not recommend word with MED larger than 5.
 

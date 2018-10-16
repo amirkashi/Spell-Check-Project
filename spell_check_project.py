@@ -65,15 +65,6 @@ def look_for_word_in_list_massage(word):
         look_for_word_in_list(False) 
 
 
-
-
-#def find_trigrams(sentences):
-    #trigram = defaultdict(int)
-    #for words in range(0, len(sentences)-2):
-        #trigram[(sentences[words], sentences[words+1], sentences[words+2])] += 1
-    #return trigram
-
-### ----- finding suggested words using a simple bigram method ----- ###
 def find_simple_bigram(word, def_med):
 	
 	table = PrettyTable(['Suggested Word', 'Minimum Edit distance', "Probability"])

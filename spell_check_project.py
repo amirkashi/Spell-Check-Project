@@ -7,8 +7,8 @@ import read_file
 from calculate_probabilities import *
 import make_sentence
 import find_unigram
-
-
+import find_simple_bigram
+import trigram
 
 def minimum_edit_distance(given_word, dictionary_word):
 	med_matrix = numpy.zeros((len(given_word)+1 , len(dictionary_word)+1 ))
@@ -65,65 +65,7 @@ def look_for_word_in_list_massage(word):
         look_for_word_in_list(False) 
 
 
-def find_simple_bigram(word, def_med):
-	
-	table = PrettyTable(['Suggested Word', 'Minimum Edit distance', "Probability"])
-	
-	corrct_word_med_1 = []
-	corrct_word_med_2 = []
-	corrct_word_med_3 = []
-	for correct_words in word_unigram_prob:
-		temp = []
-		score = 0.0
-		med = minimum_edit_distance(correct_words, word)
-		if 0< med <= def_med:
-			for wrd in trigram:
-				if wrd[1] == correct_words:
-					p1 = word_unigram_prob[wrd[1]] * bigram_probs[(wrd[0], wrd[1])]
-					p2 = word_unigram_prob[wrd[1]] * bigram_probs[(wrd[1], wrd[2])]
-					prob = p1 * p2
-					score += prob
-			temp.append(correct_words)
-			temp.append(int(med))
-			temp.append(score)
-			#corrct_word_table.append(temp)
-			if med == 1:
-				corrct_word_med_1.append(temp)
-			elif med == 2:
-				corrct_word_med_2.append(temp)
-			else:
-				corrct_word_med_3.append(temp)
-	
-	
-	corrct_word_table_sorted = sorted(corrct_word_med_1,key=lambda l:l[2], reverse=True)
-	corrct_word_med_2_sorted = sorted(corrct_word_med_2,key=lambda l:l[2], reverse=True)
-	for lst in corrct_word_med_2_sorted:
-		corrct_word_table_sorted.append(lst)
-		
-	corrct_word_med_3_sorted = sorted(corrct_word_med_3,key=lambda l:l[2], reverse=True)
-	for lst in corrct_word_med_3_sorted:
-		corrct_word_table_sorted.append(lst)
-	
-	row = 0
-	for items in corrct_word_table_sorted:
-		if row < row_number_print:
-			table.add_row(items)
-		row+=1
-			
-	table.align['Suggested Word'] = "l"
-	table.align['Probability'] = "l"
-	
-	if len(corrct_word_table_sorted) == 0:
-		def_med +=1
-		find_simple_bigram(word, def_med)
-	elif 6 <= def_med:
-		print " "
-		print "There is not a suggested word for" + word + "in a  reasonable edit distance."
-		print "Code does not look for words with 6 or more edit distance" 
-	else:
-		print " "
-		print "Sugested words for " + word + " using simple bigram model are:"
-		print table 
+
 
 ### --- this function find suggested words regarding to the previous and next words of the wrong word of the given sentence ----- ###
 def find_bigram(sen_list, word, def_med):
@@ -147,7 +89,6 @@ def find_bigram(sen_list, word, def_med):
 			temp.append(correct_words)
 			temp.append(int(med))
 			temp.append(score)
-			#corrct_word_table.append(temp)
 			if med == 1:
 				corrct_word_med_1.append(temp)
 			elif med == 2:
@@ -195,7 +136,7 @@ def find_wrong_words(given_words):
             wrong_words.append(wrd)    
     return wrong_words
 
-def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob):
+def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob, bigram_probs, trigram):
     inp = input_sentence.strip()
     given_words = word_tokenize(inp)
 
@@ -216,7 +157,8 @@ def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob
             find_unigrams = find_unigram.Find_Unigram()
             find_unigrams.find_unigram(word, default_med, word_unigram_prob, row_number_print)
             
-            #find_simple_bigram(word, default_med)
+            find_simple_bigrams = find_simple_bigram.Find_Simple_Bigram()
+            find_simple_bigrams.find_simple_bigram(word, default_med, word_unigram_prob, row_number_print, bigram_probs, trigram)
             #find_unigram(word, default_med)
 
     
@@ -235,16 +177,16 @@ if __name__ == '__main__':
     
     calculate_unigram_probabilities = Calculate_Bigram_Probability()
     bigram_probs =  calculate_unigram_probabilities.calculate_bigram_probability(sentences)
+        
     
-    
-    
-    #trigram = find_trigrams(sentences)
+    find_trigrams = trigram.Trigram()
+    trigram = find_trigrams.make_trigrams(sentences)
     row_number_print = 10 # number of corect word code suggest to user
     default_med = 2
     #input_sentence = raw_input("Please Enter a Aentece: ")
     input_sentence = "this is a bok"
     
-    spell_check(input_sentence, row_number_print, default_med, word_unigram_prob)
+    spell_check(input_sentence, row_number_print, default_med, word_unigram_prob, bigram_probs, trigram)
     
     
     

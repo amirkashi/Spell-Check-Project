@@ -16,7 +16,7 @@ class Find_Unigram(minimum_edit_distance.Minimum_Edit_Distance):
             if 0< med <= def_med:
                 temp.append(correct_words)
                 temp.append(int(med))
-                temp.append(word_unigram_prob[correct_words])
+                temp.append(round(word_unigram_prob[correct_words]*100, 2))
                 if med == 1:
                     corrct_word_med_1.append(temp)
                 elif med == 2:

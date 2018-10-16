@@ -5,11 +5,11 @@ import string
 from prettytable import PrettyTable
 import read_file
 from calculate_probabilities import *
-import make_sentence
+from make_sentence import *
 import find_unigram
 import find_simple_bigram
 import trigram
-import find_bigram
+import  find_bigram
 
 ### --- working on given sentence --- ###
 def check_fist_word_capital(sentence):
@@ -62,15 +62,16 @@ def find_wrong_words(given_words):
 def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob, bigram_probs, trigram):
     inp = input_sentence.strip()
     given_words = word_tokenize(inp)
-    #user_sentence = make_sentence.Make_Sentence_for_User_Input()
-    #user_sentence =  user_sentence.make_sentence(given_words)
-
-    check_fist_word_capital(input_sentence)
-    check_sentence_end_punctuation(input_sentence)
-    print ("")
     
     wrong_words = find_wrong_words(given_words)
     
+    user_sentence = Make_Sentence_for_User_Input()
+    user_sentence =  user_sentence.make_sentence(given_words)
+    
+    
+    #check_fist_word_capital(input_sentence)
+    #check_sentence_end_punctuation(input_sentence)
+    print ("")
     if not wrong_words:
         print ("All word of the entered sentence are correct.")
     else:
@@ -79,29 +80,31 @@ def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob
             print (word)
 
         for word in wrong_words:
+            
             find_unigrams = find_unigram.Find_Unigram()
             find_unigrams.find_unigram(word, default_med, word_unigram_prob, row_number_print)
             
             find_simple_bigrams = find_simple_bigram.Find_Simple_Bigram()
             find_simple_bigrams.find_simple_bigram(word, default_med, word_unigram_prob, row_number_print, bigram_probs, trigram)
             
-            #find_bigrams = find_bigram.Find_Bigram()
-            #find_bigrams.find_bigram()
+            find_bigrams = find_bigram.Find_Bigram()
+            find_bigrams.find_bigram(user_sentence, word, default_med, word_unigram_prob, bigram_probs, row_number_print)
 
     
 
 
 if __name__ == '__main__':
     print ("Please wait ")
-    read_file = read_file.read_file('wsj00-18_ss.tag')
+    read_file = read_file.read_file('wsj00-18.tag')
     word_list, tags = read_file.make_wort_and_tag_lists()
     
     calculate_unigram_probabilities = Calculate_Unigram_Probability()
     word_unigram_prob = calculate_unigram_probabilities.calculate_unigram_probability(word_list)
     
-    make_sentence = make_sentence.Make_Sentence_for_Training_Dataset()
+    make_sentence = Make_Sentence_for_Training_Dataset()
     sentences = make_sentence.make_sentence(word_list, tags)
     
+        
     calculate_unigram_probabilities = Calculate_Bigram_Probability()
     bigram_probs =  calculate_unigram_probabilities.calculate_bigram_probability(sentences)
         

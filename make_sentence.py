@@ -1,3 +1,5 @@
+
+
 class Make_Sentence_for_Training_Dataset:
     
     def make_sentence(self, word_list, tags):
@@ -19,3 +21,6 @@ class Make_Sentence_for_User_Input:
         sentence[0:0] = [('<s>')]
         sentence.append('</s>')
         return sentence
+
+
+

@@ -9,23 +9,7 @@ import make_sentence
 import find_unigram
 import find_simple_bigram
 import trigram
-
-def minimum_edit_distance(given_word, dictionary_word):
-	med_matrix = numpy.zeros((len(given_word)+1 , len(dictionary_word)+1 ))
-
-	for i in range(0, len(given_word)+1):
-		med_matrix[i][0]=i
-	for j in range(0, len(dictionary_word)+1):
-		med_matrix[0][j]=j
-
-	for i in range (1, len(given_word)+1):
-		for j in range(1, len(dictionary_word)+1):
-			if given_word[i-1]==dictionary_word[j-1]:
-				med_matrix[i][j] = med_matrix[i-1][j-1] 
-			else:
-				med_matrix[i][j]= min(med_matrix[i][j-1], med_matrix[i-1][j], med_matrix[i-1][j-1])+1
-	return med_matrix[i][j]
-
+import find_bigram
 
 ### --- working on given sentence --- ###
 def check_fist_word_capital(sentence):
@@ -66,67 +50,6 @@ def look_for_word_in_list_massage(word):
 
 
 
-
-### --- this function find suggested words regarding to the previous and next words of the wrong word of the given sentence ----- ###
-def find_bigram(sen_list, word, def_med):
-	
-	table = PrettyTable(['Suggested Word', 'Minimum Edit distance', "Probability"])
-	
-	corrct_word_med_1 = []
-	corrct_word_med_2 = []
-	corrct_word_med_3 = []
-	for correct_words in word_unigram_prob:
-		temp = []
-		score = 0.0
-		med = minimum_edit_distance(correct_words, word)
-		if  0< med <= def_med:
-			wrong_wrod_index_in_sentence = sen_list.index(word)
-			previous_word = sen_list[wrong_wrod_index_in_sentence - 1]
-			next_word = sen_list[wrong_wrod_index_in_sentence + 1]
-			prv_score = bigram_probs.get((previous_word, correct_words), 0) * word_unigram_prob[correct_words]
-			next_score = bigram_probs.get((correct_words, next_word), 0) * word_unigram_prob[correct_words]
-			score = prv_score * next_score
-			temp.append(correct_words)
-			temp.append(int(med))
-			temp.append(score)
-			if med == 1:
-				corrct_word_med_1.append(temp)
-			elif med == 2:
-				corrct_word_med_2.append(temp)
-			else:
-				corrct_word_med_3.append(temp)
-	
-	corrct_word_table_sorted = sorted(corrct_word_med_1,key=lambda l:l[2], reverse=True)
-	corrct_word_med_2_sorted = sorted(corrct_word_med_2,key=lambda l:l[2], reverse=True)
-	for lst in corrct_word_med_2_sorted:
-		corrct_word_table_sorted.append(lst)
-		
-	corrct_word_med_3_sorted = sorted(corrct_word_med_3,key=lambda l:l[2], reverse=True)
-	for lst in corrct_word_med_3_sorted:
-		corrct_word_table_sorted.append(lst)
-	
-	row = 0
-	for items in corrct_word_table_sorted:
-		if row < row_number_print:
-			table.add_row(items)
-		row+=1
-		
-	table.align['Suggested Word'] = "l"
-	table.align['Probability'] = "l"
-	
-	if len(corrct_word_table_sorted) == 0:
-		def_med +=1
-		find_bigram(sen_list, word, def_med)
-	elif 6 <= def_med:
-		print " "
-		print "There is not a suggested word for" + word + "in a  reasonable edit distance."
-		print "Code does not look for words with 6 or more edit distance" 
-	else:
-		print " "
-		print "Sugested words for " + word + " using bigram model are:"
-		print table 
-
-
 # ---
 def find_wrong_words(given_words):
     wrong_words = []
@@ -139,13 +62,15 @@ def find_wrong_words(given_words):
 def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob, bigram_probs, trigram):
     inp = input_sentence.strip()
     given_words = word_tokenize(inp)
+    #user_sentence = make_sentence.Make_Sentence_for_User_Input()
+    #user_sentence =  user_sentence.make_sentence(given_words)
 
     check_fist_word_capital(input_sentence)
     check_sentence_end_punctuation(input_sentence)
     print ("")
     
     wrong_words = find_wrong_words(given_words)
-
+    
     if not wrong_words:
         print ("All word of the entered sentence are correct.")
     else:
@@ -159,7 +84,9 @@ def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob
             
             find_simple_bigrams = find_simple_bigram.Find_Simple_Bigram()
             find_simple_bigrams.find_simple_bigram(word, default_med, word_unigram_prob, row_number_print, bigram_probs, trigram)
-            #find_unigram(word, default_med)
+            
+            #find_bigrams = find_bigram.Find_Bigram()
+            #find_bigrams.find_bigram()
 
     
 
@@ -172,7 +99,7 @@ if __name__ == '__main__':
     calculate_unigram_probabilities = Calculate_Unigram_Probability()
     word_unigram_prob = calculate_unigram_probabilities.calculate_unigram_probability(word_list)
     
-    make_sentence = make_sentence.Make_Sentence()
+    make_sentence = make_sentence.Make_Sentence_for_Training_Dataset()
     sentences = make_sentence.make_sentence(word_list, tags)
     
     calculate_unigram_probabilities = Calculate_Bigram_Probability()

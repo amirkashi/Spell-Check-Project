@@ -1,7 +1,9 @@
+import sys
+sys.path.insert(0, 'Spell_Check_Project')
 from collections import defaultdict
 import numpy 
 from nltk.tokenize import sent_tokenize, word_tokenize
-import string
+#import string
 from prettytable import PrettyTable
 import read_file
 from calculate_probabilities import *
@@ -95,7 +97,7 @@ def spell_check(input_sentence, row_number_print, default_med, word_unigram_prob
 
 if __name__ == '__main__':
     print ("Please wait ")
-    read_file = read_file.read_file('wsj00-18.tag')
+    read_file = read_file.read_file("./data/wsj00-18.tag")
     word_list, tags = read_file.make_wort_and_tag_lists()
     
     calculate_unigram_probabilities = Calculate_Unigram_Probability()
@@ -120,3 +122,4 @@ if __name__ == '__main__':
     
     
     
+

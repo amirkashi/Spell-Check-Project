@@ -3,7 +3,7 @@ sys.path.insert(0, 'Spell_Check_Project')
 from collections import defaultdict
 import numpy 
 from nltk.tokenize import sent_tokenize, word_tokenize
-#import string
+import string
 from prettytable import PrettyTable
 import read_file
 from calculate_probabilities import *

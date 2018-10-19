@@ -1,21 +1,21 @@
 
 # Spell Checking Project #
 
-This project uesed probabilistic bigram language model and minimum edit distance (MED) to find the closest word given by user. The program get a sentence form user and then it looks it word by word. If progrm find wrong word or words in a given sentece, it will suggest 10 correct word for each of wrong words. 
+This project used probabilistic language models and a minimum edit distance (MED) to find the closest word to the word given by the user. The program gets a sentence from the user and reviews it word by word. If the program finds a wrong word or words in a given sentence, it will suggests at least 10 correct words for each wrong word. 
 
 ## Data ##
-For this project Penn tree-bank data (WSJ section 00-18) was used as to create a word list.
+For this project, the Penn tree-bank data (WSJ section 00-18) was used to create a word list.
 
 ## Method ##
-The code will find the closest word from the word list using **Minimum Edit Distance (MED)** and **statistical language model**.
-**Minimum Edit Distance (MED)** shows level of dissimilarity of two words which means the larger difference the larger dissimilarity 
-This project uses probability of word occurance in a traing data to find the following statistics:
-**Unigram:** is number of ocuurance of a word in qiven document. 
-**Bigram:** and **Trigram** are occurence of two and three consequtive words in a sentence of a given document. 
-The code first calculate the above statistics and then performs following steps to find if there are wrong word in the given sentence:
-* Check if first word of sentence is started with a capital character. 
-* Sentence has puncuation at the end. 
-* Looks for all words sentence to find if it is in the training dataset (unigram). If a word does not appear in the dataset it consider that word as a wrong word. and will follow these steps to recomend the closed words to it:
-  * It calculate MED between the worng word and all words of the training dataset and save words with 1 and 2 MED. This is because 80% of errors are within 1 MED and almost all other errors are within 2 MED.
-  * If program cannot find correct word with 1 or 2 MED it notifies the user and tell in what MED the correct word is found. Program will not recommend word with MED larger than 5.
-  * Then program will use **unigram**, **bigram**, and **trigram** statistics to find which founded correct word has the largest posibility to be recomended for a wrong word.
+The code will find the closest word from the word list using **Minimum Edit Distance (MED) ** and **statistical language model**.
+**Minimum Edit Distance (MED)** shows a level of dissimilarity of two words. The larger difference, the larger dissimilarity.
+This project uses the probability of a word occurrence in training data to find the following statistics:
+**Unigram:** is the number of occurrence of a word in given document. 
+**Bigram:** and **Trigram** are occurrence of two and three consecutive words in a sentence of a given document, respectively. 
+The code first calculates the above statistics and then performs the following steps to find if there is any wrong word in the given sentence:
+* Checks if the first word of a sentence is started with a capital character. 
+* Checks if the sentence has punctuation at the end. 
+* Looks for all words in a sentence to find if the words are in the training dataset (unigram). If a word does not appear in the dataset, then that word is considered as a wrong word. The program then follows these steps to recommend the closed words to the wrong word:
+  * It calculates the MED between the wrong word and all of the words in the training dataset, and saves words with an MED of 1 and 2. MEDs of 1 and 2 are chosen because 80% of all errors are within 1 MED and almost all of the other 20% of errors are within 2 MED.
+  * If the program cannot find the correct word within 1 or 2 MED, it notifies the user and tells in what MED the correct word is found. The program will not recommend a word with an MED larger than 5.
+  * Then program uses **unigram**, **bigram**, and **trigram** statistics to find which found correct word has the largest possibility to be recommended for a wrong word.

@@ -6,12 +6,11 @@ from make_sentence import *
 import find_unigram
 import find_simple_bigram
 import trigram
-import  find_bigram
+import find_bigram
 import look_for_user_words
 import string
 
 class Spell_Check:
-    
     def __init__(self):
         self.ROW_NUMBER_PRINT = 10 
         self.DEFAULT_MINIMUM_DISTANCE = 2
@@ -21,8 +20,8 @@ class Spell_Check:
         self.bigram_probability = None
         self.sentences = None
         self.trigram = None
-        self.calculate_unigram_bigram_trigram_probability()        
-            
+        self.calculate_unigram_bigram_trigram_probability()
+
     def calculate_unigram_bigram_trigram_probability(self):
         print ("Please wait, training the model")
         read_data = read_file.read_file("./data/wsj00-18.tag")
@@ -35,7 +34,7 @@ class Spell_Check:
         self.bigram_probability = calculate_probabilities.calculate_bigram_probability(self.sentences)
         find_trigrams = trigram.Trigram()
         self.trigram = find_trigrams.make_trigrams(self.sentences)
-            
+
     def check_fist_word_capital(self, sentence):
         first_word_cap = True
         if sentence[0].islower():
@@ -53,8 +52,7 @@ class Spell_Check:
             print ("Sentence ended with a punctuation.")
         else:
             print ("WARNING: Sentence need to be ended with a punctuation.")
-    
-        
+
     def get_user_sentence(self, input_sentence):
         if not input_sentence:
             print ("Sentence does not contain a word!")
@@ -66,7 +64,7 @@ class Spell_Check:
             looking_for_user_words = look_for_user_words.Look_For_User_Words()
             wrong_words = looking_for_user_words.find_wrong_words(given_words, self.unigram_probability)
             make_sentence_for_user = Make_Sentence_for_User_Input()
-            user_sentence =  make_sentence_for_user.make_sentence(given_words)
+            user_sentence = make_sentence_for_user.make_sentence(given_words)
             print ("")
             if not wrong_words:
                 print ("All word of the entered sentence are correct.")

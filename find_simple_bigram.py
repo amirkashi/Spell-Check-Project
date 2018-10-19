@@ -12,7 +12,7 @@ class Find_Simple_Bigram(minimum_edit_distance.Minimum_Edit_Distance):
             temp = []
             score = 0.0
             med = self.minimum_edit_distance(correct_words, word)
-            if 0< med <= default_med:
+            if 0 < med <= default_med:
                 for wrd in trigram:
                     if wrd[1] == correct_words:
                         p1 = word_unigram_prob[wrd[1]] * bigram_probs.get((wrd[0], wrd[1]), 0.01)
@@ -28,22 +28,22 @@ class Find_Simple_Bigram(minimum_edit_distance.Minimum_Edit_Distance):
                     corrct_word_med_2.append(temp)
                 else:
                     corrct_word_med_3.append(temp)
-        corrct_word_table_sorted = sorted(corrct_word_med_1,key=lambda l:l[2], reverse=True)
-        corrct_word_med_2_sorted = sorted(corrct_word_med_2,key=lambda l:l[2], reverse=True)
+        corrct_word_table_sorted = sorted(corrct_word_med_1, key=lambda l:l[2], reverse=True)
+        corrct_word_med_2_sorted = sorted(corrct_word_med_2, key=lambda l:l[2], reverse=True)
         for lst in corrct_word_med_2_sorted:
             corrct_word_table_sorted.append(lst)
-        corrct_word_med_3_sorted = sorted(corrct_word_med_3,key=lambda l:l[2], reverse=True)
+        corrct_word_med_3_sorted = sorted(corrct_word_med_3, key=lambda l:l[2], reverse=True)
         for lst in corrct_word_med_3_sorted:
             corrct_word_table_sorted.append(lst)
         row = 0
         for items in corrct_word_table_sorted:
             if row < row_number_print:
                 table.add_row(items)
-            row+=1
+            row += 1
         table.align['Suggested Word'] = "l"
         table.align['Probability'] = "l"
         if len(corrct_word_table_sorted) == 0:
-            default_med +=1
+            default_med += 1
             self.find_simple_bigram(word, default_med, word_unigram_prob, row_number_print, bigram_probs, trigram)
         elif 6 <= default_med:
             print " "

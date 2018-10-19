@@ -17,8 +17,8 @@ class Find_Bigram(minimum_edit_distance.Minimum_Edit_Distance):
 			wrong_wrod_index_in_sentence = user_sentence.index(word)
 			previous_word = user_sentence[wrong_wrod_index_in_sentence - 1]
 			next_word = user_sentence[wrong_wrod_index_in_sentence + 1]
-			prv_score = bigram_probs.get((previous_word, correct_words), 0.00001) * word_unigram_prob[correct_words]
-			next_score = bigram_probs.get((correct_words, next_word), 0.00001) * word_unigram_prob[correct_words]
+			prv_score = bigram_probs.get((previous_word, correct_words), 0.01) * word_unigram_prob[correct_words]
+			next_score = bigram_probs.get((correct_words, next_word), 0.01) * word_unigram_prob[correct_words]
 			score = prv_score * next_score
 			temp.append(correct_words)
 			temp.append(int(med))

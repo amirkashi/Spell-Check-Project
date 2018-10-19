@@ -15,8 +15,8 @@ class Find_Simple_Bigram(minimum_edit_distance.Minimum_Edit_Distance):
             if 0< med <= default_med:
                 for wrd in trigram:
                     if wrd[1] == correct_words:
-                        p1 = word_unigram_prob[wrd[1]] * bigram_probs.get((wrd[0], wrd[1]), 0.00001)
-                        p2 = word_unigram_prob[wrd[1]] * bigram_probs.get((wrd[1], wrd[2]), 0.00001)
+                        p1 = word_unigram_prob[wrd[1]] * bigram_probs.get((wrd[0], wrd[1]), 0.01)
+                        p2 = word_unigram_prob[wrd[1]] * bigram_probs.get((wrd[1], wrd[2]), 0.01)
                         prob = p1 * p2
                         score += prob
                 temp.append(correct_words)
